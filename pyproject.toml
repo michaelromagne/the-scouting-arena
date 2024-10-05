@@ -1,0 +1,36 @@
+[project]
+name = "foot_lens"
+version = "0.1.0"
+description = "Visualizations for Football games analysis"
+authors = [
+    {name = "Michael Romagne", email = "michael.romagne@gmail.com"},
+]
+dependencies = [
+    "statsbombpy>=1.13.1",
+    "matplotlib>=3.9.1.post1",
+    "seaborn>=0.13.2",
+    "mplsoccer>=1.4.0",
+    "soccerdata @ git+https://github.com/probberechts/soccerdata@master",
+    "socceraction>=1.5.3",
+    "matplotsoccer>=0.0.8",
+    "tqdm>=4.66.5",
+    "highlight-text>=0.2",
+]
+requires-python = ">=3.10,<3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "ipykernel>=6.29.5",
+    "pyarrow>=17.0.0",
+    "ipython>=8.28.0",
+]
