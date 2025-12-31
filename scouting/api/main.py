@@ -684,6 +684,7 @@ class SimilarPlayerOut(BaseModel):
     image_url: Optional[str]
     nationality: Optional[str]
     birth_date: Optional[str]  # ISO date string (YYYY-MM-DD)
+    age: Optional[int]  # Calculated age
 
 
 class SimilarPlayersResponse(BaseModel):
@@ -1953,6 +1954,8 @@ def get_player_similarities_from_db(
     nation: Optional[str] = None,
     min_value: Optional[float] = None,
     max_value: Optional[float] = None,
+    min_age: Optional[int] = None,
+    max_age: Optional[int] = None,
     league: Optional[str] = None,
 ) -> list[SimilarPlayerOut]:
     """Query pre-computed player similarities from database.
@@ -1968,6 +1971,8 @@ def get_player_similarities_from_db(
         nation: Nationality filter
         min_value: Minimum market value filter
         max_value: Maximum market value filter
+        min_age: Minimum player age filter
+        max_age: Maximum player age filter
         league: League filter (supports Big 5 European Leagues)
 
     Returns:
@@ -2045,6 +2050,23 @@ def get_player_similarities_from_db(
             & (similar_player_seasons.market_value_eur <= max_value)
         )
 
+    # Age filtering based on birth_date
+    if min_age is not None:
+        current_year = datetime.now().year
+        max_birth_year = current_year - min_age
+        similar_players_query = similar_players_query.filter(
+            (similar_player_seasons.birth_date != None)
+            & (extract("year", similar_player_seasons.birth_date) <= max_birth_year)
+        )
+
+    if max_age is not None:
+        current_year = datetime.now().year
+        min_birth_year = current_year - max_age
+        similar_players_query = similar_players_query.filter(
+            (similar_player_seasons.birth_date != None)
+            & (extract("year", similar_player_seasons.birth_date) >= min_birth_year)
+        )
+
     similar_players_query = (
         similar_players_query.order_by(
             PlayerSimilarity.distance.asc()
@@ -2078,6 +2100,13 @@ def get_player_similarities_from_db(
         # Convert distance back to similarity score (1 - distance)
         similarity_score = 1.0 - similarity.distance
 
+        # Calculate age from birth_date
+        age = None
+        if similar_birth_date:
+            current_year = datetime.now().year
+            birth_year = similar_birth_date.year
+            age = current_year - birth_year
+
         similar_players.append(
             SimilarPlayerOut(
                 player_id=similar_player_season_id,
@@ -2093,6 +2122,7 @@ def get_player_similarities_from_db(
                 birth_date=similar_birth_date.isoformat()
                 if similar_birth_date
                 else None,
+                age=age,
             )
         )
 
@@ -2123,6 +2153,8 @@ def get_similar_players(
     max_value: Optional[float] = Query(
         None, description="Maximum market value in millions EUR"
     ),
+    min_age: Optional[int] = Query(None, description="Minimum player age", ge=1, le=99),
+    max_age: Optional[int] = Query(None, description="Maximum player age", ge=1, le=99),
 ):
     """Find k most similar players from pre-computed similarities in database.
 
@@ -2155,6 +2187,8 @@ def get_similar_players(
         nation=nation,
         min_value=min_value,
         max_value=max_value,
+        min_age=min_age,
+        max_age=max_age,
         league=league,
     )
 

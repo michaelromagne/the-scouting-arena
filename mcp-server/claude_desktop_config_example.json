@@ -1,0 +1,13 @@
+{
+    "mcpServers": {
+        "scouting-arena": {
+            "command": "/Users/michaelromagne/perso/the-scouting-arena/mcp-server/.venv/bin/python",
+            "args": [
+                "/Users/michaelromagne/perso/the-scouting-arena/mcp-server/scouting_mcp.py"
+            ],
+            "env": {
+                "SCOUTING_API_URL": "https://scoutingapi-production.up.railway.app"
+            }
+        }
+    }
+}
