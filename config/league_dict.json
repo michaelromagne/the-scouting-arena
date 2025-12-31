@@ -1,0 +1,41 @@
+{
+  "Champions League": {
+    "FBref": "UEFA Champions League"
+  },
+  "Conference League": {
+    "FBref": "UEFA Conference League"
+  },
+  "Europa League": {
+    "FBref": "UEFA Europa League"
+  },
+  "Eredivisie": {
+    "FBref": "Eredivisie"
+  },
+  "KSA": {
+    "FBref": "Saudi Pro League"
+  },
+  "Primeira-Liga": {
+    "FBref": "Primeira Liga"
+  },
+  "Sweden": {
+    "FBref": "Allsvenskan"
+  },
+  "Swiss": {
+    "FBref": "Swiss Super League"
+  },
+  "Ligue-2": {
+    "FBref": "Ligue 2"
+  },
+  "Brasil": {
+    "FBref": "Campeonato Brasileiro Série A"
+  },
+  "Argentina": {
+    "FBref": "Liga Profesional de Fútbol Argentina"
+  },
+  "Canada": {
+    "FBref": "Canadian Premier League"
+  },
+  "Belgium": {
+    "FBref": "Belgian Pro League"
+  }
+}

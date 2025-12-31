@@ -1,0 +1,7 @@
+# robots.txt for The Scouting Arena
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://thescoutingarena.com/sitemap.xml

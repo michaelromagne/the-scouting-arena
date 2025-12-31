@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "scouting"
+version = "0.1.0"
+description = "Visualizations for Football games analysis"
+authors = ["Michael Romagne <michael.romagne@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+packages = [{include = "scouting"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+matplotlib = ">=3.9.1.post1"
+seaborn = ">=0.13.2"
+mplsoccer = ">=1.4.0"
+soccerdata = {git = "https://github.com/probberechts/soccerdata", branch = "master"}
+socceraction = ">=1.5.3"
+matplotsoccer = ">=0.0.8"
+tqdm = ">=4.66.5"
+highlight-text = ">=0.2"
+ipykernel = ">=6.29.5"
+pyarrow = ">=17.0.0"
+ipython = ">=8.28.0"
+xgboost = "^2.1.3"
+fuzzywuzzy = "^0.18.0"
+plotly = "^5.24.1"
+nbformat = "^5.10.4"
+beautifulsoup4 = "^4.12.3"
+streamlit = "^1.41.1"
+aiohttp = "^3.12.4"
+sqlalchemy = "^2.0.41"
+pydantic = "^2.11.7"
+pandas = "^2.2.3"
+click = "^8.1.7"
+psycopg = {version = "^3.2.1", extras = ["binary"]}
+fastapi = "^0.115.12"
+uvicorn = "^0.34.3"
+psycopg2-binary = "^2.9.10"
+rapidfuzz = "^3.14.3"
+
+
+[tool.poetry.group.fastapi.dependencies]
+fastapi = "^0.115.12"
+uvicorn = "^0.34.3"
+alembic = "^1.16.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff.lint]
+# Some pycodestyle rules (E), pyflakes and isort, pep8-naming
+select = ["E4", "E7", "E9", "F", "I", "N"]
+ignore = []

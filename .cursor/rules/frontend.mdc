@@ -1,0 +1,284 @@
+---
+description: Instructions to develop the frontend of the app
+globs:
+alwaysApply: true
+---
+Frontend Rules (Next.js + Tailwind + shadcn/ui + Plotly)
+
+Tech stack
+	•	Framework: Next.js (App Router) with TypeScript. Use Server Components by default; mark client parts with "use client".  ￼
+	•	Styling: Tailwind CSS.
+	•	UI kit: shadcn/ui (built on Radix Primitives). Prefer these components for a11y and consistency.  ￼ ￼
+	•	Charts: plotly.js via react-plotly.js. Input is Plotly JSON from the backend (data, layout, frames, config).  ￼ ￼
+	•	Data fetching / cache: TanStack Query (React Query). Use queries for reads, mutations for writes.  ￼
+	•	Design method: Atomic Design for components (atoms → organisms → pages).  ￼ ￼
+
+	•	Keep top-level pages thin: compose organisms; no data shaping in pages.
+
+Data & API
+	•	All reads use React Query with typed fetchers (lib/api.ts).
+	•	Default staleTime 60s for GETs; set retry: 1.
+	•	Handle errors with a shared <ErrorState/> component (retry button calls refetch()).
+
+Plotly rendering (critical path)
+	•	Use a single component components/PlotlyFigure.tsx:
+	•	Props: src: string (endpoint that returns pio.to_json), optional height.
+	•	Fetch the URL, JSON.parse the response, pass to <Plot /> with useResizeHandler, style={{ width:'100%', height:'100%' }}.
+	•	Do not rebuild charts on the client; the server owns figure generation.  ￼ ￼
+
+UI conventions
+	•	Use shadcn/ui + Radix for Select, Tabs, Dialog, Tooltip, Table.
+	•	Accessible labels & aria attributes are mandatory; Radix provides primitives but you must supply labels.  ￼
+	•	Tables: sticky header, zebra rows, sortable columns; collapse to Cards on mobile.
+
+Theming
+	•	Colors from the DA:
+	•	Primary navy for backgrounds, electric green for “good”, orange for highlights.
+	•	Implement as Tailwind CSS variables under :root (light) and .dark (if needed).
+
+Pages (MVP scope)
+	•	/rankings: filters (league, season, metric, min minutes) + toggle Table/Chart. Chart uses /charts/rankings/bar.
+	•	/scatter: controls (x metric, y metric, league, season, min minutes, position) + /charts/scatter/metrics.
+	•	/players/[id]: player header, metric bars, “similar players” list.
+	•	/compare: two autocompletes + side-by-side bars.
+
+Performance
+	•	Prefer Server Components; isolate interactive bits as Client Components.  ￼
+	•	Memoize heavy client widgets; keep Plotly in a client component only.
+	•	Add Cache-Control on chart endpoints so React Query + browser cache work together.
+
+Accessibility
+	•	Keyboard navigable controls; visible focus states.
+	•	Tooltips mustn’t hide essential info.
+	•	Provide text alternatives for icons; use aria-label on icon-only buttons.  ￼
+
+Testing & quality
+	•	TypeScript strict mode.
+	•	ESLint + Prettier on commit.
+	•	Add simple Playwright smoke tests for the 4 MVP pages (page renders, filters change URL/search params, chart loads).
+
+Definition of Done (per PR)
+	•	Follows folder conventions & Atomic layers.  ￼
+	•	Uses shadcn/ui/Radix components (no raw HTML controls unless justified).  ￼ ￼
+	•	Data via React Query; no ad-hoc fetch in components (except PlotlyFigure).  ￼
+	•	Plotly charts rendered from backend JSON; no client-side figure construction.  ￼
+	•	Accessible labels, keyboard focus, and responsive layout verified.
+
+
+### Artistic direction
+
+Here’s a Design & Artistic Direction (DA) proposal for your new football analytics web app — something that feels modern, credible for data, and engaging for sports fans, while adapting to desktop and mobile.
+
+⸻
+
+🎨 Artistic Direction: “Data-driven Football”
+
+Moodboard Keywords
+	•	Modern sports tech
+	•	Minimal + bold accents
+	•	Data clarity first, entertainment second
+	•	Dynamic but not cluttered
+
+Color Palette
+	•	Primary: Deep Navy (#0B1B3F) — trust, contrast for bright data
+	•	Accent 1: Electric Green (#00FF88) — highlight performance, ties to “pitch” color
+	•	Accent 2: Bright Orange (#FF6B35) — for alerts, top players, action buttons
+	•	Backgrounds: Off-white (#F7F9FB) for sections, Dark Navy for charts
+	•	Neutral text: Cool gray scale (#E5E7EB to #4B5563)
+
+Typography
+	•	Headings: Sans-serif, geometric (e.g., Poppins, Montserrat) → sporty & modern
+	•	Body: Humanist sans-serif (e.g., Inter) → readability for data-heavy tables
+	•	Use monospace only for metric codes or small numbers in compact charts.
+
+Iconography & Graphics
+	•	Simple, line-based icons (Lucide / Feather style) for league flags, positions, and actions
+	•	No heavy realism — let charts & photos bring the realism
+
+Imagery
+	•	Player silhouettes in muted backgrounds for hero sections
+	•	Background gradients with pitch lines subtly overlaid
+	•	Action shots only in focused feature areas (e.g., player compare page)
+
+⸻
+
+🖥️ Page Layouts & UI Components
+
+1. Home / Dashboard
+	•	Hero section: “Find the best football players across Europe” with a call-to-action (“Explore Rankings”)
+	•	League + season selector at the top
+	•	Featured: “Top 5 players this week” card carousel
+	•	CTA buttons: “Rankings” | “Compare players” | “Discover similar players”
+
+2. Rankings
+	•	Filter panel (left or top) with shadcn/ui Select, multi-league toggle
+	•	Table view with sortable columns (metric, value, rank)
+	•	Plotly bar chart view toggle (Top N visualization)
+	•	On mobile → cards per player with mini bar indicator
+
+3. Scatter / Compare Metrics
+	•	Filter strip at top: X metric, Y metric, league, season, min minutes
+	•	Full-width Plotly scatter chart with tooltip showing player & stats
+	•	Mobile: collapsible filters, chart scales to width
+	•	Highlight best-in-class with accent colors
+
+4. Player Profile
+	•	Header: player photo, team, league, key stats at glance
+	•	Metric visualization: radar chart (Plotly) + performance bar list
+	•	“Similar Players” grid — click to jump to their profile
+	•	Historical trend mini-charts (performance over seasons)
+
+5. Player Compare
+	•	Two selectors (autocomplete search)
+	•	Side-by-side bars for each metric
+	•	Similarity score (big number, accent highlight)
+	•	Option to share compare view link
+
+⸻
+
+📐 Design Patterns & Components
+	•	Atomic Design: break down into atoms (buttons, tags), molecules (filter group, stat card), organisms (rankings table, player header)
+	•	Responsive grid: 12-column desktop → stacked cards mobile
+	•	Charts: dark background with bright accents for clarity; consistent legend placement
+	•	Tables: zebra striping, sticky headers, compact on mobile
+	•	Cards: rounded corners (16px+), subtle shadows, hover scale for interactivity
+
+⸻
+
+📊 Example Visual Identity in Action
+
+Imagine the scatter plot from your [PDF mockup (30†source)] but:
+	•	Navy background, points in electric green/orange clusters
+	•	Axis labels in light gray, bold title
+	•	Hover tooltips with player name in bold accent color
+	•	On desktop, filters to the left; on mobile, filters collapse above the chart
+
+⸻
+
+If you want, I can produce a Figma starter design kit with:
+	•	Color styles & typography
+	•	Component variants (buttons, tables, charts)
+	•	Two full page layouts (Rankings + Player Compare) ready for dev handoff
+
+That way you can plug it into your Next.js + Tailwind/shadcn project from day one. Would you like me to create that Figma kit?
+
+#### Color styles
+Name
+Hex
+Usage
+Primary / Navy
+#0B1B3F
+Headers, backgrounds, navbar
+Accent / Green
+#00FF88
+Data highlights, success
+Accent / Orange
+#FF6B35
+CTAs, warnings, top player badges
+Neutral / Light
+#F7F9FB
+Background sections
+Neutral / Dark Text
+#4B5563
+Body text
+Neutral / Gray Text
+#9CA3AF
+Axis labels, placeholders
+
+
+#### Typography
+Name
+Font
+Weight
+Size
+Usage
+H1 / Title
+Poppins
+700
+40px
+Hero headings
+H2 / Section Title
+Poppins
+600
+28px
+Section headers
+Body / Default
+Inter
+400
+16px
+Body text
+Body / Bold
+Inter
+600
+16px
+Metric labels
+Caption
+Inter
+400
+12px
+Table small text
+
+
+2. Core Components (Atomic Design)
+
+Atoms
+	•	Button / Primary → navy background, white text, rounded-lg, padding 12x24
+	•	Button / Secondary → outline navy, text navy
+	•	Select / Dropdown → label above, rounded, arrow icon
+	•	Tag → rounded-full, small text, background accent color
+	•	Icon → Lucide icons, line weight 2px
+
+Molecules
+	•	Filter Group → group of Selects + Apply button
+	•	Player Card → photo or silhouette, name, team, metric score bar
+	•	Stat Row → metric name, value, horizontal bar indicator
+
+Organisms
+	•	Rankings Table → header row sticky, zebra striping, sort arrows
+	•	Plotly Chart Frame → dark navy background, rounded-lg, padding 16
+	•	Player Header → left: player image + info; right: top 3 metrics
+
+⸻
+
+3. Page Frames
+
+Rankings Page
+	•	Top bar: league selector, season selector, metric selector
+	•	Main:
+	•	Left: filter sidebar (desktop), collapsible (mobile)
+	•	Right: tab view → “Table” (Rankings Table) / “Chart” (Bar chart)
+	•	CTA at bottom: “Compare Players”
+
+Scatter Page
+	•	Filters at top: X metric, Y metric, league, season, min minutes
+	•	Full-width Plotly scatter chart in chart frame
+	•	Mobile: filters collapse above chart
+
+Player Profile
+	•	Hero section:
+	•	Left: player portrait, name, team, position
+	•	Right: 3 highlight stats with big numbers
+	•	Body: radar chart + stat list
+	•	Similar players grid
+
+Compare Players
+	•	Side-by-side player headers
+	•	Metric comparison bars
+	•	Similarity score highlight
+
+⸻
+
+4. Visual Accents
+	•	Use accent green for “good” performance, orange for highlights
+	•	Subtle gradient backgrounds in hero sections:
+linear-gradient(120deg, #0B1B3F, #1A2C5B)
+	•	Data charts → dark background with bright points/bars
+
+⸻
+
+5. Export for Dev
+
+Once built in Figma:
+	1.	Mark all components as components in Figma for reuse.
+	2.	Use Auto Layout for responsiveness.
+	3.	Export color & typography tokens for Tailwind.
