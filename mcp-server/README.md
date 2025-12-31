@@ -26,11 +26,16 @@ All ranking and comparison tools support:
 
 ### 1. Set up the MCP server
 
+At the root of the repo, run:
+
 ```bash
-cd mcp-server
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -e .
+poetry install
+```
+
+or
+
+```bash
+poetry install --only mcp
 ```
 
 ### 2. Configure Claude Desktop

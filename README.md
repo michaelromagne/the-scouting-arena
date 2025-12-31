@@ -33,6 +33,24 @@ Website URL : [https://the-scouting-arena.com](https://the-scouting-arena.com)
   </tr>
 </table>
 
+## MCP server
+
+The Scouting Arena includes an MCP (Model Context Protocol) server that enables AI agents to directly query the football statistics API. This allows natural language queries to be translated into API calls, making player analysis conversational and intuitive.
+
+The MCP server exposes tools for searching players, retrieving detailed statistics, comparing players, and analyzing rankings across leagues and seasons. Simply ask Claude about player performance, and it will fetch real-time data from your local or deployed API instance.
+
+**Setup:**
+- Copy `mcp-server/claude_desktop_config_example.json` to your Claude Desktop configuration file (typically `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS) and adjust the paths to match your local setup.
+- Run `docker compose up -d db redis api`  to run redis, postgres and the API services.
+- Make sure your DB is populated with up-to-date data, or point to an external DB using the `DATABASE_URL` environment variable.
+
+<table>
+  <tr>
+    <td width="50%"><img src="assets/mcp_mbappe.png" alt="MCP Player Query Example" /></td>
+    <td width="50%"><img src="assets/mcp_passers.png" alt="MCP Rankings Query Example" /></td>
+  </tr>
+</table>
+
 ## Prerequisites
 
 - Docker

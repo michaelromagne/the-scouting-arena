@@ -6,7 +6,7 @@
                 "/Users/michaelromagne/perso/the-scouting-arena/mcp-server/scouting_mcp.py"
             ],
             "env": {
-                "SCOUTING_API_URL": "https://scoutingapi-production.up.railway.app"
+                "SCOUTING_API_URL": "http://localhost:8000"
             }
         }
     }
