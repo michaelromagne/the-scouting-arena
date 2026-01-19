@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     # Pre-commit version v4.6.0
-    rev: ed714747d7acbc5790b171702bb012af3b0fe145
+    rev: v6.0.0
     hooks:
     - id: check-yaml
       args: [ --allow-multiple-document ]
@@ -9,7 +9,7 @@ repos:
     - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version v0.6.7
-    rev: 9f089bd3b7591566aef707c4e144ea2ceedf7de2
+    rev: v0.14.13
     hooks:
       # Run the linter.
       - id: ruff
