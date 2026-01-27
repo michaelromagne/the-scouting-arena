@@ -14,6 +14,7 @@ const navItems = [
   { href: "/team-rankings", label: "Team Rankings" },
   { href: "/national-teams", label: "National Teams" },
   { href: "/talent-pool", label: "Talent Pool" },
+  { href: "/demands", label: "Demands" },
 ];
 
 export function Navigation() {
