@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from sqlalchemy import (
+    ARRAY,
     CheckConstraint,
     Date,
     DateTime,
@@ -13,6 +14,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -305,3 +307,72 @@ class Feedback(Base):
     page: Mapped[str] = mapped_column(String, nullable=False)
     timestamp: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[str] = mapped_column(DateTime, nullable=False)
+
+
+class ClubDemand(Base):
+    """Club demand for player recruitment."""
+
+    __tablename__ = "club_demands"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    club_name: Mapped[str] = mapped_column(String, nullable=False)
+    club_contact_name: Mapped[Optional[str]] = mapped_column(String)
+    club_contact_email: Mapped[Optional[str]] = mapped_column(String)
+    created_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    deadline: Mapped[Optional[Date]] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String, nullable=False, default="open")
+    priority: Mapped[str] = mapped_column(String, nullable=False, default="medium")
+    position: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
+    age_min: Mapped[Optional[int]] = mapped_column(Integer)
+    age_max: Mapped[Optional[int]] = mapped_column(Integer)
+    nationality_preferences: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String))
+    budget_min: Mapped[Optional[int]] = mapped_column(Integer)
+    budget_max: Mapped[Optional[int]] = mapped_column(Integer)
+    metrics_requirements: Mapped[Optional[dict]] = mapped_column(JSONB)
+    playing_style_notes: Mapped[Optional[str]] = mapped_column(Text)
+    default_season: Mapped[str] = mapped_column(String, nullable=False)
+    internal_notes: Mapped[Optional[str]] = mapped_column(Text)
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('open', 'closed')",
+            name="ck_club_demand_status",
+        ),
+        CheckConstraint(
+            "priority IN ('low', 'medium', 'high')",
+            name="ck_club_demand_priority",
+        ),
+    )
+
+    matches: Mapped[list[DemandMatch]] = relationship(
+        "DemandMatch", back_populates="demand", cascade="all, delete-orphan"
+    )  # type: ignore[name-defined]
+
+
+class DemandMatch(Base):
+    """Match between a club demand and a player."""
+
+    __tablename__ = "demand_matches"
+    __table_args__ = (
+        UniqueConstraint("demand_id", "player_season_id", name="uq_demand_player"),
+        CheckConstraint(
+            "status IN ('suggested', 'proposed', 'interested', 'rejected', 'signed')",
+            name="ck_demand_match_status",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    demand_id: Mapped[int] = mapped_column(
+        ForeignKey("club_demands.id", ondelete="CASCADE"), nullable=False
+    )
+    player_season_id: Mapped[int] = mapped_column(
+        ForeignKey("player_seasons.id", ondelete="CASCADE"), nullable=False
+    )
+    match_score: Mapped[float] = mapped_column(Float, nullable=False)
+    status: Mapped[str] = mapped_column(String, nullable=False, default="suggested")
+    added_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    status_updated_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+
+    demand: Mapped[ClubDemand] = relationship("ClubDemand", back_populates="matches")
+    player_season: Mapped[PlayerSeason] = relationship("PlayerSeason")

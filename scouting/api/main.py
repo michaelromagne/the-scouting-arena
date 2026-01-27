@@ -50,6 +50,11 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Scouting API", version="0.1.0")
 
+# Register routers
+from scouting.api.routers import demands
+
+app.include_router(demands.router)
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
