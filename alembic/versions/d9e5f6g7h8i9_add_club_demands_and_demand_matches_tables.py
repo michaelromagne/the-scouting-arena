@@ -30,19 +30,21 @@ def upgrade() -> None:
         sa.Column("club_contact_email", sa.String(), nullable=True),
         sa.Column("created_date", sa.DateTime(), nullable=False),
         sa.Column("deadline", sa.Date(), nullable=True),
-        sa.Column(
-            "status", sa.String(), nullable=False, server_default="open"
-        ),
-        sa.Column(
-            "priority", sa.String(), nullable=False, server_default="medium"
-        ),
+        sa.Column("status", sa.String(), nullable=False, server_default="open"),
+        sa.Column("priority", sa.String(), nullable=False, server_default="medium"),
         sa.Column("position", postgresql.ARRAY(sa.String()), nullable=False),
         sa.Column("age_min", sa.Integer(), nullable=True),
         sa.Column("age_max", sa.Integer(), nullable=True),
-        sa.Column("nationality_preferences", postgresql.ARRAY(sa.String()), nullable=True),
+        sa.Column(
+            "nationality_preferences", postgresql.ARRAY(sa.String()), nullable=True
+        ),
         sa.Column("budget_min", sa.Integer(), nullable=True),
         sa.Column("budget_max", sa.Integer(), nullable=True),
-        sa.Column("metrics_requirements", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "metrics_requirements",
+            postgresql.JSONB(astext_type=sa.Text()),
+            nullable=True,
+        ),
         sa.Column("playing_style_notes", sa.Text(), nullable=True),
         sa.Column("default_season", sa.String(), nullable=False),
         sa.Column("internal_notes", sa.Text(), nullable=True),
@@ -64,9 +66,7 @@ def upgrade() -> None:
         sa.Column("demand_id", sa.Integer(), nullable=False),
         sa.Column("player_season_id", sa.Integer(), nullable=False),
         sa.Column("match_score", sa.Float(), nullable=False),
-        sa.Column(
-            "status", sa.String(), nullable=False, server_default="suggested"
-        ),
+        sa.Column("status", sa.String(), nullable=False, server_default="suggested"),
         sa.Column("added_date", sa.DateTime(), nullable=False),
         sa.Column("status_updated_date", sa.DateTime(), nullable=False),
         sa.Column("notes", sa.Text(), nullable=True),
@@ -89,9 +89,7 @@ def upgrade() -> None:
     )
 
     # Create indexes for better query performance
-    op.create_index(
-        "ix_club_demands_status", "club_demands", ["status"], unique=False
-    )
+    op.create_index("ix_club_demands_status", "club_demands", ["status"], unique=False)
     op.create_index(
         "ix_club_demands_deadline", "club_demands", ["deadline"], unique=False
     )
