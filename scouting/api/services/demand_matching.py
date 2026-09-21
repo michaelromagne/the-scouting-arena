@@ -162,9 +162,7 @@ def find_matching_players(
     query = query.filter(PlayerSeason.position.in_(demand.position))
 
     # Filter by minimum minutes played (270 as per design)
-    query = query.filter(
-        (PlayerSeason.minutes != None) & (PlayerSeason.minutes >= 270)
-    )
+    query = query.filter((PlayerSeason.minutes != None) & (PlayerSeason.minutes >= 270))
 
     # Filter by age range if specified
     if demand.age_min or demand.age_max:
