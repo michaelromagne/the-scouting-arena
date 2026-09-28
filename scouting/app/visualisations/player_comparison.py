@@ -63,7 +63,9 @@ def create_statistics_selector(key_suffix: str = "") -> tuple[str, str]:
             options=[stat[0] for stat in available_stats],
             index=1,
             key=f"x_stat_main{key_suffix}",
-            format_func=lambda x: f"[{x.split(' - ')[0]}] {next((stat[2] for stat in available_stats if stat[0] == x), '')}",
+            format_func=lambda x: (
+                f"[{x.split(' - ')[0]}] {next((stat[2] for stat in available_stats if stat[0] == x), '')}"
+            ),
         )
     with col2:
         y_stat = st.selectbox(
@@ -71,7 +73,9 @@ def create_statistics_selector(key_suffix: str = "") -> tuple[str, str]:
             options=[stat[0] for stat in available_stats],
             index=0,
             key=f"y_stat_main{key_suffix}",
-            format_func=lambda x: f"[{x.split(' - ')[0]}] {next((stat[2] for stat in available_stats if stat[0] == x), '')}",
+            format_func=lambda x: (
+                f"[{x.split(' - ')[0]}] {next((stat[2] for stat in available_stats if stat[0] == x), '')}"
+            ),
         )
 
     return x_stat, y_stat
