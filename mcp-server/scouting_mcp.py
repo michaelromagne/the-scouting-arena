@@ -9,7 +9,7 @@ from typing import Any
 import httpx
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
+from mcp.types import TextContent, Tool
 
 # Set up logging to stderr (Claude Desktop captures this)
 logging.basicConfig(
@@ -693,7 +693,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=f"Available leagues:\n\n"
+                    text="Available leagues:\n\n"
                     + "\n".join(f"• {league}" for league in data),
                 )
             ]
@@ -703,7 +703,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=f"Available seasons:\n\n"
+                    text="Available seasons:\n\n"
                     + "\n".join(f"• {season}" for season in data),
                 )
             ]
