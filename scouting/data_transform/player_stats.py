@@ -454,11 +454,13 @@ def save_player_similarities_to_csv(
 
 def get_quantiles(row):
     return row.transform(
-        lambda x: round(x.rank(pct=True) * 100)
-        if not SCOUTING_STATISTICS.loc[
-            SCOUTING_STATISTICS["stat"] == row.name, "reverse_quantile"
-        ].values[0]  # type: ignore
-        else round((1 - x.rank(pct=True)) * 100)
+        lambda x: (
+            round(x.rank(pct=True) * 100)
+            if not SCOUTING_STATISTICS.loc[
+                SCOUTING_STATISTICS["stat"] == row.name, "reverse_quantile"
+            ].values[0]  # type: ignore
+            else round((1 - x.rank(pct=True)) * 100)
+        )
     )
 
 

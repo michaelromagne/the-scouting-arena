@@ -30,8 +30,9 @@ def get_cards_and_substitutions(
         .replace({"FirstHalf": 1, "SecondHalf": 2})
         .rename(columns={"period": "period_id", "type": "type_name"})
         .assign(
-            time_seconds=lambda x: x["minute"]
-            - (45 * (x["period_id"] - 1) * 60 + x["second"])
+            time_seconds=lambda x: (
+                x["minute"] - (45 * (x["period_id"] - 1) * 60 + x["second"])
+            )
         )
     )
     return processed_events

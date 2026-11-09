@@ -539,9 +539,7 @@ def update_match(
     "/{demand_id}/matches/{player_season_id}/propose",
     response_model=DemandMatchResponse,
 )
-def propose_match(
-    demand_id: int, player_season_id: int, db: Session = Depends(get_db)
-):
+def propose_match(demand_id: int, player_season_id: int, db: Session = Depends(get_db)):
     """Shortcut to set status to proposed."""
     match = (
         db.query(DemandMatch)
@@ -567,9 +565,7 @@ def propose_match(
 
 
 @router.delete("/{demand_id}/matches/{player_season_id}", status_code=204)
-def delete_match(
-    demand_id: int, player_season_id: int, db: Session = Depends(get_db)
-):
+def delete_match(demand_id: int, player_season_id: int, db: Session = Depends(get_db)):
     """Remove player from demand matches."""
     match = (
         db.query(DemandMatch)
