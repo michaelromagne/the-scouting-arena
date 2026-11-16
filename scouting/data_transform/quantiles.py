@@ -434,9 +434,11 @@ def calculate_per_90_stats(
 
     # Convert to per 90, excluding percentage columns and average columns
     per_90_df[numerical_cols] = per_90_df[numerical_cols].apply(
-        lambda x: x.div(per_90_df["90s"].replace(0, np.nan))
-        if "%" not in x.name and x.name not in exclude_from_per_90
-        else x
+        lambda x: (
+            x.div(per_90_df["90s"].replace(0, np.nan))
+            if "%" not in x.name and x.name not in exclude_from_per_90
+            else x
+        )
     )
     per_90_df.columns = per_90_df.columns.str.replace("_per_90", "", regex=False)
     per_90_df.columns = [
@@ -986,9 +988,11 @@ def _aggregate_across_leagues(df: pd.DataFrame) -> pd.DataFrame:
     team_combinations = (
         df.groupby(group_cols)["team"]
         .apply(
-            lambda teams: " & ".join(sorted(teams.unique()))
-            if len(teams.unique()) > 1
-            else teams.iloc[0]
+            lambda teams: (
+                " & ".join(sorted(teams.unique()))
+                if len(teams.unique()) > 1
+                else teams.iloc[0]
+            )
         )
         .reset_index()
     )
