@@ -139,7 +139,7 @@ If you need to make your Railway API public for testing:
 
 1. Go to your Railway project dashboard
 2. Navigate to Settings → Networking
-3. Enable "Public Networking" 
+3. Enable "Public Networking"
 4. Copy the public URL
 5. Update your MCP config with this URL
 6. **Remember to disable public access** when done testing
